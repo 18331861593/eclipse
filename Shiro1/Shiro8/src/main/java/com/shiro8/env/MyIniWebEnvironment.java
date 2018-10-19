@@ -1,0 +1,41 @@
+package com.shiro8.env;
+
+import javax.servlet.Filter;
+
+import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.web.env.IniWebEnvironment;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
+import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
+import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
+
+public class MyIniWebEnvironment extends IniWebEnvironment {
+
+	protected FilterChainResolver createFilterChainResolver() {
+		// 在此处扩展自己的FilterChainResolver
+		// 1、创建FilterChainResolver
+		PathMatchingFilterChainResolver filterChainResolver = new PathMatchingFilterChainResolver();
+		// 2、创建FilterChainManager
+		DefaultFilterChainManager filterChainManager = new DefaultFilterChainManager();
+		// 3、注册Filter
+		for (DefaultFilter filter : DefaultFilter.values()) {
+			filterChainManager.addFilter(filter.name(), (Filter) ClassUtils.newInstance(filter.getFilterClass()));
+		}
+
+		filterChainManager.addToChain("/login.jsp", "authc");
+		filterChainManager.addToChain("/unauthorized", "anon");
+		filterChainManager.addToChain("/**", "authc");
+		filterChainManager.addToChain("/**", "roles", "admin");
+		
+		FormAuthenticationFilter authcFilter = (FormAuthenticationFilter)filterChainManager.getFilter("authc");
+		authcFilter.setLoginUrl("/login.jsp");
+		RolesAuthorizationFilter rolesFilter = (RolesAuthorizationFilter) filterChainManager.getFilter("roles");
+		rolesFilter.setUnauthorizedUrl("/unauthorized.jsp");  
+		  
+		filterChainResolver.setFilterChainManager(filterChainManager);  
+		return filterChainResolver;
+	}
+
+}

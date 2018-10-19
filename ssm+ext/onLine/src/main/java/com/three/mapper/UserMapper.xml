@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.three.dao.UserMapper">  
+	
+	<resultMap type="com.three.entity.User" id="user"> 
+		<result property="userid" javaType="int" column="USER_ID" />
+		<result column="LOGIN_NM"   javaType="string" property="username"/>      
+		<result column="LOGIN_PWD" javaType="string" property="password"/>        
+		<result property="email" javaType="String" column="EM" />  
+		<result property="realname" javaType="String" column="REAL_NM" />
+		<result property="tel" javaType="String" column="TE" />    
+		<result column="ROLE_ID" javaType="int" property="roleId" /> 
+		<result property="logintime" jdbcType="TIMESTAMP" javaType="java.util.Date" column="LOGIN_TIME" />  
+	</resultMap>
+	
+	<resultMap type="com.three.entity.User" id="u"> 
+		<result property="userid" javaType="int" column="USER_ID" />
+		<result column="LOGIN_NM"   javaType="string" property="username"/>      
+		<result column="LOGIN_PWD" javaType="string" property="password"/>        
+		<result property="email" javaType="String" column="EM" />  
+		<result property="realname" javaType="String" column="REAL_NM" />
+		<result property="tel" javaType="String" column="TE" />    
+		<result property="logintime" jdbcType="TIMESTAMP" javaType="java.util.Date" column="LOGIN_TIME" />  
+		<collection property="role" javaType="com.three.entity.Role" ofType="com.three.entity.Role">
+	      	<result property="roleId"  javaType="int"    column="ROLE_ID" />      
+			<result property="roleName" javaType="String" column="ROLE_NM" />                    
+			<result property="mname" javaType="String" column="M_NAME"  />           
+        </collection>
+	</resultMap>
+	
+	<!--登录查询 -->
+	<select id="login" resultMap="user">
+		select * from tb_user where login_nm=#{0} and login_pwd=#{1} and state = 0    
+	</select>
+	
+	<update id="setLoginTime">
+		update TB_USER set LOGIN_TIME=sysdate() where USER_ID=#{0}
+	</update>
+	
+	<select id="selectByNo" resultMap="user">
+	 select USER_ID,REAL_NM, LOGIN_NM, em, TE, STATE, role_id from tb_user WHERE USER_ID = #{0}
+ 	</select>
+	
+	<insert id="insert" >
+		INSERT INTO tb_user (LOGIN_NM, LOGIN_PWD, ROLE_ID, EM, REAL_NM, TE,STATE) 
+		VALUES (#{username}, #{password}, #{roleId}, #{email}, #{realname}, #{tel},0)
+	</insert>
+	
+	<delete id="userDelete">
+		delete from tb_user where USER_ID= #{0}
+	</delete>
+	
+	<select id="selectCount" resultType="int">
+		SELECT COUNT(USER_ID) FROM TB_USER  WHERE state = 0
+	</select>
+	
+	<update id="updateState">
+		update TB_USER set STATE = 1 where USER_ID=#{0}
+	</update>
+	
+	<update id="update">
+		UPDATE tb_user SET LOGIN_NM = #{username}, REAL_NM = #{realname}, EM = #{email},
+		TE = #{tel}, ROLE_ID = #{roleId}, STATE = #{state} WHERE (USER_ID = #{userid})
+	</update>
+	
+	
+	 <!-- 根据role_id查询用户身份 -->
+	<select id="paging" resultMap="u">
+		select  a.*  from (select u.USER_ID, u.LOGIN_NM, u.em, u.REAL_NM, u.TE,u.ROLE_ID,
+		u.LOGIN_TIME, u.STATE, r.ROLE_NM from tb_user u, tb_role r
+		where u.ROLE_ID = r.ROLE_ID and u.state = 0 ) a limit #{0},#{1}
+	</select>
+	
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:aop="http://www.springframework.org/schema/aop"  
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">   
+	
+	<!-- 自动扫描 -->  
+	<!-- <context:component-scan base-package="com.three" /> -->
+	
+	<!-- 引入配置文件 -->  
+    <bean id="propertyConfigurer"  
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="location" value="classpath:config/dataSource.properties" />  
+    </bean>  
+    
+    <!-- 数据源 -->
+    <bean id="parentDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="initialSize" value="${initialSize}"></property>  
+        <property name="maxActive" value="${maxActive}"></property>  
+        <property name="maxIdle" value="${maxIdle}"></property>  
+        <property name="minIdle" value="${minIdle}"></property>  
+        <property name="maxWait" value="${maxWait}"></property>
+        
+        <!-- 打开 psCache 指定每个连接上psCache的大小 -->
+        <!-- <property name="poolPreparedStatements" value="true"></property> -->
+    </bean>
+    
+    <!-- 数据源1 -->
+	<bean id="dataSource1" parent="parentDataSource" destroy-method="close">  
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="username" value="${jdbc.username}" ></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="url" value="${url}"></property>
+    </bean>  
+	
+	<!-- 数据源2 -->
+	<!-- <bean id="dataSource2" parent="parentDataSource" destroy-method="close">  
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="username" value="${jdbc.username}" ></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="url" value="${url_test}"></property>
+    </bean>  
+    
+    <bean id="dataSource3" parent="parentDataSource" destroy-method="close">  
+        <property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="username" value="${jdbc.username}" ></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="url" value="${nhdz_url}"></property>
+    </bean>   -->
+    
+    
+    <!-- 自动义切换数据库 类 -->
+	<!-- <bean id="multiDataSource"  class="com.three.dataSource.MultiDataSource">
+		<property name="defaultTargetDataSource" ref="dataSource1"></property>
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="dataSource1" value-ref="dataSource1"></entry>
+				<entry key="dataSource2" value-ref="dataSource2"></entry>
+				<entry key="dataSource3" value-ref="dataSource3"></entry>
+			</map>
+		</property>
+	</bean> -->
+	
+	 <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <!-- <property name="dataSource" ref="dataSource" /> -->
+      <!--  <property name="configLocation" value="classpath:config/mybatis-config.xml"></property>   -->
+       <property name="dataSource" ref="dataSource1" /> 
+        <!-- 自动扫描mapping.xml文件 -->  
+        <property name="mapperLocations" value="classpath*:com/*/dao/*.xml"></property>  
+    </bean> 
+    
+    <bean class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+    
+    
+       <!-- DAO接口所在包名，Spring会自动查找其下的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.*.dao" />  
+       <!--  <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>   -->
+    </bean>   
+	
+	   <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->  
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource1" ></property>  
+    </bean>  
+        
+<!-- 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/> -->
+	
+	
+	<!-- <bean id="dataSourceAspect" class="com.three.dataSource.DataSourceAspect" /> -->
+	
+<!-- 	<aop:config>
+		<aop:aspect ref="dataSourceAspect">
+			<aop:pointcut id="dataSourcePointcut"
+				expression="execution(* com.*.dao..*.*(..))" />
+			<aop:before pointcut-ref="dataSourcePointcut" method="intercept" />
+		</aop:aspect>
+	</aop:config> -->
+	 
+    
+    <!-- 使用annotation定义数据库事务，这样可以在类或方法中直接使用@Transactional注解来声明事务 --> 
+   <tx:advice id="TxAdvice" transaction-manager="transactionManager">    
+        <tx:attributes>    
+            <tx:method name="insert*" propagation="REQUIRED" />    
+            <tx:method name="update*" propagation="REQUIRED" />    
+            <tx:method name="delete*" propagation="REQUIRED" />    
+            <tx:method name="load*" propagation="SUPPORTS" read-only="true" />    
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true" />    
+            <tx:method name="paging*" propagation="SUPPORTS" read-only="true" />    
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="find*" propagation="SUPPORTS"  read-only="true" />    
+            <tx:method name="undo" propagation="REQUIRED" />    
+            <tx:method name="*" propagation="SUPPORTS" read-only="true" />    
+        </tx:attributes>    
+    </tx:advice>
+    
+    <!-- <aop:config>
+	    <aop:aspect id="aspect1" ref="TxAdvice" >
+			<aop:pointcut id="serviceMethod" 
+				expression="execution(* com.three.service..*.*(..))" />    
+			</aop:aspect>
+    </aop:config> -->
+
+    
+</beans>

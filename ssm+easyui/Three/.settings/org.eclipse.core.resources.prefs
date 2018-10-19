@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+encoding//src/main=UTF-8
+encoding//src/main/java/com/three/dao=UTF-8
+encoding//src/main/java/com/three/utils/CookieTool.java=UTF-8
+encoding//src/main/java/com/three/utils/VerifyCodeUtil.java=UTF-8
+encoding//src/main/resources/config/dataSource.properties=UTF-8
+encoding//src/main/resources/log4j.properties=UTF-8
+encoding//src/main/webapp/WEB-INF/views/error/404.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/error/500.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/error/error.jsp=UTF-8
+encoding/src=UTF-8

@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+*{
+	margin: 0px;
+	padding:0px;
+}
+body{
+	font: 13px/1.5;
+	font-family: "微软雅黑";
+}
+
+#students{
+	width:900px;
+	margin: 0px auto;
+}
+.student{
+	border-bottom: 1px dashed #000;
+	margin-bottom: 10px;
+	transition:all ease-in 100ms;
+}
+.student:hover{
+	background-color: #eee;
+}
+.student .photo{
+	float: left;
+	
+}
+.student .details{
+	float: left;
+	margin-left: 20px;
+	line-height: 22px;
+}
+.form-item{
+	min-height: 35px;
+}
+.form-item .iblock{
+	display: inline-block;
+	width:180px;
+	text-align: right;
+	font-weight: lighter;
+}
+.form-item .ipt{
+	width:300px;
+	height: 30px;
+	line-height: 28px;
+}
+.form-item .btn{
+	width:100px;
+	height: 36px;
+	background-color: green;
+	border:1px solid #eee;
+	border-radius:5px;
+	color:white;
+	font-size: 17px;
+}
+
+.select{
+	outline:5px solid #f60;
+}
+
+.pagging{
+	text-align: center;
+}
+.pagging a{
+	text-decoration: none;
+	color:blue;
+}
+.pagging a:hover{
+	color:orange;
+	text-decoration: underline;
+}
+.pagging a.current{
+	font-weight: bold;
+	font-size: 200%;
+	color:orange;
+}
+
+
+
+
+
+
+
+
+

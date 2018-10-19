@@ -1,0 +1,3 @@
+com\hello\shiro\dao\UserDao.class
+com\hello\shiro\service\UserService.class
+com\hello\shiro\entity\User.class

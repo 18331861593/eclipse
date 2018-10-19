@@ -1,0 +1,2 @@
+主要是activeMQ的发送文件和接受文件
+session.createStreamMessage();

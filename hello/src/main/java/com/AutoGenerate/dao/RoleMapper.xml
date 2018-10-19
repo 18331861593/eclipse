@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.AutoGenerate.dao.RoleMapper">
+
+    <resultMap id="role" type="com.AutoGenerate.entity.Role">
+		<result property="id" javaType="Integer" column="id" />
+		<result property="name" javaType="String" column="name" />
+		<result property="mname" javaType="String" column="mname" />
+    </resultMap>
+
+
+    <select id="paging" resultMap="role">
+    	 select * from Role limit #{0},#{1}
+    </select>
+
+    <insert id="insert" >
+    	insert into Role(name,mname) values (#{name},#{mname})
+    </insert>
+
+    <delete id="delete">
+    	delete from Role where id= #{0}
+    </delete>
+	
+	<update id="update">
+		UPDATE Role set name = #{name},mname = #{mname} WHERE id = #{id}
+	</update>
+
+    <select id="getById" resultMap="role">
+    	select * from Role WHERE id = #{0}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(id) from Role
+    </select>
+	
+</mapper>

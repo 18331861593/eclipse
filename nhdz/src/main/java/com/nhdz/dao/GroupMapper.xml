@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhdz.dao.GroupMapper">
+
+	<resultMap type="com.nhdz.utils.entity.Group" id="group">
+		<result column="tid" property="tid" />
+		<result column="id" property="id" />
+		<result column="favorite_count" property="favorite_count" />
+		<result column="go_detail_count" property="go_detail_count" />
+		<result column="user_favorite" property="user_favorite" />
+		<result column="comment_count" property="comment_count" />
+		<result column="content" property="content" />
+		<result column="bury_count" property="bury_count" />
+		<result column="repin_count" property="repin_count" />
+		<result column="digg_count" property="digg_count" />
+		<association property="user"  resultMap="com.nhdz.dao.UserMapper.user" />
+	</resultMap>
+
+	<insert id="insert">
+		INSERT INTO nhdz.tb_group (tid, id,
+		favorite_count,
+		go_detail_count, user_favorite, comment_count,
+		content, bury_count,
+		repin_count, digg_count, userId, insertTime)
+		VALUES (#{tid}, #{id},
+		#{favorite_count}, #{go_detail_count}, #{user_favorite},
+		#{comment_count},
+		#{content}, #{bury_count}, #{repin_count},
+		#{digg_count}, #{userId}, sys_date()))
+	</insert>
+
+	<select id="paging" resultMap="group" >
+		select a.* from (SELECT g.tid, g.id,
+		g.favorite_count, g.go_detail_count, g.user_favorite,
+		g.comment_count, g.content, g.bury_count,
+		g.repin_count, g.digg_count, u.user_id,
+		u.is_following,u.avatar_url,u.name,u.user_verified,
+		g.insertTime FROM tb_group g,user u where u.user_id = g.userId) a limit #{0},#{1}
+	</select>
+	
+	<select id="getById" resultMap="group" >
+		SELECT g.tid, g.id,
+		g.favorite_count, g.go_detail_count, g.user_favorite,
+		g.comment_count, g.content, g.bury_count,
+		g.repin_count, g.digg_count, 
+		g.insertTime FROM tb_group g where g.id = #{id}
+	</select>
+
+</mapper>

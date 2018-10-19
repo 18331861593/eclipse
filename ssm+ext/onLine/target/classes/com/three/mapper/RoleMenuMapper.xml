@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.three.dao.RoleMenuMapper" >
+	
+	<!-- 实体类本身 -->
+	<resultMap type="com.three.entity.RoleMenu" id="roleMenu">
+		<result column="" property="rid" javaType="int"/>
+		<result column="" property="mid" javaType="int"/>
+	</resultMap>
+	
+	<resultMap id="queryForListMap" type="com.three.entity.Menu">
+		<result  property="mid"  javaType="int"    column="M_ID" />      
+		<result column="M_NAME" javaType="String" property="mname"  />                    
+		<result property="mstate" javaType="String" column="M_STATE"  /> 
+		<result column="M_URL" javaType="String" property="murl"  />                    
+		<result property="micon" javaType="String" column="M_ICON"  />
+		<result property="parentId" javaType="int" column="P_ID"  />   
+		<!--rolemenu表关联 -->
+		<collection property="roleMenu" javaType="java.util.List" ofType="com.three.entity.RoleMenu">  
+			<result  property="rid"  javaType="int"    column="R_ID" />      
+			<result column="M_ID" javaType="int" property="mid"  />       
+		</collection>
+	</resultMap>  
+	
+	
+	<select id="selectAll" resultMap="roleMenu">
+		select * from TB_ROLE_MENU 
+	</select>
+	
+	<select id="selectById" resultMap="roleMenu">
+		select * from TB_ROLE_MENU where r_id = #{0}
+	</select>
+	
+	<select id="find" resultMap="queryForListMap" >
+		<!-- select * from tb_menu,tb_role_menu where tb_role_menu.r_id = #{0} and tb_role_menu.m_id = tb_menu.M_ID -->
+		 select * from TB_MENU menu,TB_ROLE_MENU rolemenu where rolemenu.r_id=#{0} and rolemenu.m_id=menu.m_id 
+	</select>
+	
+	<delete id="roleMenuDelete">
+		delete from tb_role_menu where r_id = #{0}
+	</delete>
+	
+	<delete id="roleMenuInsert">
+		insert into tb_role_menu(r_id,m_id) values(#{0},#{1})
+	</delete>
+	
+</mapper>

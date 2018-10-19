@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.AutoGenerate.dao.MenuMapper">
+
+    <resultMap id="menu" type="com.AutoGenerate.entity.Menu">
+		<result property="id" javaType="Integer" column="id" />
+		<result property="mname" javaType="String" column="mname" />
+		<result property="mstate" javaType="String" column="mstate" />
+		<result property="murl" javaType="String" column="murl" />
+		<result property="micon" javaType="String" column="micon" />
+    </resultMap>
+
+
+    <select id="paging" resultMap="menu">
+    	 select * from Menu limit #{0},#{1}
+    </select>
+
+    <insert id="insert" >
+    	insert into Menu(mname,mstate,murl,micon,parentId) values (#{mname},#{mstate},#{murl},#{micon},#{parentId})
+    </insert>
+
+    <delete id="delete">
+    	delete from Menu where id= #{0}
+    </delete>
+	
+	<update id="update">
+		UPDATE Menu set mname = #{mname},mstate = #{mstate},murl = #{murl},micon = #{micon},parentId = #{parentId} WHERE id = #{id}
+	</update>
+
+    <select id="getById" resultMap="menu">
+    	select * from Menu WHERE id = #{0}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(id) from Menu
+    </select>
+	
+</mapper>

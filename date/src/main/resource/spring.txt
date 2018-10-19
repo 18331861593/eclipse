@@ -1,0 +1,2 @@
+class=com.reflect.test.Service2
+method=doService2

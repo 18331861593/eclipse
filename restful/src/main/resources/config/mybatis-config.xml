@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+
+	<!-- 配置延迟加载 -->
+	<settings>
+		<setting name="lazyLoadingEnable" value="true" />
+		<setting name="aggressiverLazLoading" value="false" />
+		<!-- mybatis 查询返回 map Mybatis默认若field的值为null时候不返回字段的名称，
+	导致结果集map没有对应的key。 -->
+		<setting name="callSettersOnNulls" value="true"/>
+	</settings>
+
+	
+	
+
+</configuration>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.redis.dao.UserMapper">  
+	 
+	<cache type="com.redis.utils.RedisCache" />
+
+	<resultMap type="com.redis.entity.User" id="user"> 
+		<result property="id" javaType="Integer" column="id" />
+		<result property="roleId" javaType="Integer" column="roleId" />
+		<result property="username" javaType="String" column="username" />
+		<result property="password" javaType="String" column="password" />
+		<result property="email" javaType="String" column="email" />
+		<result property="realname" javaType="String" column="realname" />
+		<result property="tel" javaType="String" column="tel" />
+	</resultMap>
+	
+	<select id="paging" resultMap="user">
+		select * from User
+	</select>
+
+	<select id="selectCount" resultType="int">
+		select count(id) from User
+    </select>
+
+
+
+
+
+</mapper>

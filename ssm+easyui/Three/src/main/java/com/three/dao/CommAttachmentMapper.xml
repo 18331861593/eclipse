@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.three.dao.CommAttachmentMapper">
+
+    <resultMap id="c" type="com.three.entity.CommAttachment">
+        <result property="id" javaType="int" column="id" />
+        <result property="title" javaType="String" column="title" />
+        <result property="fileUrl" javaType="String" column="fileUrl" />
+        <result property="fileSize" javaType="String" column="fileSize" />
+        <result property="fileType" javaType="String" column="fileType" />
+        <result property="createdAt" javaType="java.util.Date"  column="createdAt" />
+    </resultMap>
+
+
+    <select id="paging" resultMap="c">
+       select *  from CommAttachment limit #{0},#{1}
+    </select>
+
+    <insert id="insert" >
+        insert into CommAttachment(title,fileUrl,createdAt,fileType,fileSize)
+          values (#{title},#{fileUrl},sysdate(),#{fileType},#{fileSize})
+    </insert>
+
+    <delete id="delete">
+        delete from CommAttachment where id= #{0}
+    </delete>
+	
+	<update id="update">
+		UPDATE commattachment  title = '#{title}, fileUrl = #{fileUrl}, fileSize =  #{fileSize}, 
+		fileType =  #{fileType}, createdAt = sysdate() WHERE id = #{id}
+	</update>
+
+    <select id="getById" resultMap="c">
+        select * from CommAttachment WHERE id = #{0}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(id) from CommAttachment
+    </select>
+	
+</mapper>

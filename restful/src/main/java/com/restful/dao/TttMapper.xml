@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restful.dao.TttMapper">
+
+
+	<sql id="t">
+		id as "id",
+		name as"name",
+		telephone as "telephone",
+		descr as
+		"descr",
+		gender as "gender",
+		education as "education"
+	</sql>
+
+
+	<select id="getAll" resultType="map">
+		select
+		<include refid="t" />
+		from ttt
+	</select>
+
+	<select id="getOne" resultType="map">
+		select
+		<include refid="t" />
+		from ttt where id = #{0}
+	</select>
+
+	<delete id="delete">
+		delete from ttt where id = #{0}
+	</delete>
+
+	<insert id="insert">
+		INSERT INTO "public"."ttt" (
+		"name",
+		"telephone",
+		"descr",
+		"gender",
+		"education"
+		)
+		VALUES
+		(
+		#{name},
+		#{telephone},
+		#{descr},
+		#{gender},
+		#{education}
+		);
+	</insert>
+
+	<update id="update">
+		UPDATE ttt
+		SET "name" = #{name},
+		"telephone" =
+		#{telephone},
+		"descr" = #{descr},
+		"gender" = #{gender},
+		"education" =
+		#{education}
+		WHERE
+		"id" = #{id}
+	</update>
+
+</mapper>

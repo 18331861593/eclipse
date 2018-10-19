@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.three.dao.RoleMapper">
+	 
+	<resultMap type="com.three.entity.Role" id="role"> 
+		<result property="roleId"  javaType="int"    column="ROLE_ID" />      
+		<result property="roleName" javaType="String" column="ROLE_NM" />                    
+		<result property="mname" javaType="String" column="M_NAME"  /> 
+	</resultMap>
+	
+	<!-- 查询全部 -->
+	<select id="selectAll" resultMap="role">
+		select *  from tb_role order by ROLE_ID
+	</select>   
+	
+	<select id="selectByNo" resultMap="role">
+		select *  from tb_role where role_id = #{0}
+	</select>
+    
+	<!-- 查询所以行数 --> 
+	<select id="selectCount" resultType="int">
+		select count(*) from tb_role
+	</select> 
+   
+	<!-- 分页查询 -->
+	<select id="paging" resultMap="role" parameterType="int" >
+		select * from  (select a.*, rownum rnum from (select * from tb_role order by ROLE_ID) a 
+		<where> <![CDATA[rownum <= #{0}]]> </where>
+		)
+		<where><![CDATA[rnum > #{1}]]></where>  
+	</select>   
+ 
+	<!-- 修改角色名称 -->
+	<update id="roleUpdate">
+		update tb_role set role_nm=#{0} where role_id=#{1}
+	</update>  
+    
+	<!-- 修改权限名称 --> 
+	<update id="menuNameUpdate">
+		update tb_role set M_NAME=#{0} where role_id=#{1}  
+	</update>
+ 
+	<!-- 删除用户 -->
+	<delete id="roleDelete">
+		delete from tb_role where role_id=#{0}
+	</delete>
+  
+	<!-- 新增用户 -->
+	<insert id="roleInsert" parameterType="com.three.entity.Role">
+		INSERT INTO TB_ROLE (ROLE_NM) VALUES(#{roleName})
+	</insert>
+	
+</mapper>

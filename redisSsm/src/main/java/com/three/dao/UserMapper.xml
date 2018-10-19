@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.three.dao.UserMapper">
+
+    <resultMap id="user" type="com.three.entity.User">
+		<result property="id" javaType="Integer" column="id" />
+		<result property="username" javaType="String" column="username" />
+		<result property="password" javaType="String" column="password" />
+		<result property="roleId" javaType="Integer" column="roleId" />
+		<result property="email" javaType="String" column="email" />
+		<result property="realname" javaType="String" column="realname" />
+		<result property="tel" javaType="String" column="tel" />
+		<result property="logintime" javaType="java.util.Date" column="logintime" />
+		<result property="state" javaType="Integer" column="state" />
+    </resultMap>
+
+
+    <select id="paging" resultMap="user">
+    	 select * from User limit #{0},#{1}
+    </select>
+
+    <insert id="insert" >
+    	insert into User(username,password,roleId,email,realname,tel,logintime,state) values (#{username},#{password},#{roleId},#{email},#{realname},#{tel},#{logintime},#{state})
+    </insert>
+
+    <delete id="delete">
+    	delete from User where id= #{0}
+    </delete>
+	
+	<update id="update">
+		UPDATE User set username = #{username},password = #{password},roleId = #{roleId},email = #{email},realname = #{realname},tel = #{tel},logintime = #{logintime},state = #{state} WHERE id = #{id}
+	</update>
+
+    <select id="getById" resultMap="user">
+    	select * from User WHERE id = #{0}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(id) from User
+    </select>
+	
+</mapper>

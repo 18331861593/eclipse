@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiroDemo.dao.UserMapper">
+
+	<resultMap id="BaseResultMap" type="com.shiroDemo.entity.User">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="account" jdbcType="VARCHAR" property="account" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="isDisabled" jdbcType="BIT" property="isdisabled" />
+		<result column="isDeleted" jdbcType="BIT" property="isdeleted" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, account, password, isDisabled, isDeleted
+	</sql>
+	
+	<select id="login" resultType="com.shiroDemo.entity.User"  parameterType="com.shiroDemo.entity.User">
+		select <include refid="Base_Column_List" /> from user	where account = #{account} and  password = #{password} 
+	</select>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from user
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	
+	<insert id="insert" parameterType="com.shiroDemo.entity.User">
+		insert into user ( account, password, isDisabled, isDeleted)
+		values ( #{account,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{isdisabled,jdbcType=BIT}, #{isdeleted,jdbcType=BIT})
+	</insert>
+	
+	<select id="selectById"  resultType="com.shiroDemo.entity.User"  parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	
+	
+	<update id="updateById"  parameterType="com.shiroDemo.entity.User">
+		update user
+		set account = #{account,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		isDisabled = #{isdisabled,jdbcType=BIT},
+		isDeleted = #{isdeleted,jdbcType=BIT}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<select id="selectCount" resultType="Integer">
+		select count(id) from user
+	</select>
+	
+	<!-- 删除管理员用户和角色关联 -->
+ 	<delete id="delUserRole" parameterType="com.shiroDemo.entity.UserRoles">
+ 		delete from userroles
+ 			<if test="userid!=null">where adminUserId=#{userid}</if>
+ 			<if test="roleid!=null">where roleId=#{roleid}</if>
+ 	</delete>
+ 	
+ 		<!-- 添加管理员用户和角色关联 -->
+	<insert id="addUserRole" parameterType="com.shiroDemo.entity.UserRoles">
+		insert into userroles
+			(userid,roleId)
+		values
+			(#{userid},#{roleid})
+	</insert> 
+	
+	<!-- 查询管理员用户和角色关联 -->
+	<select id="selectUserRole" parameterType="com.shiroDemo.entity.UserRoles" resultType="com.shiroDemo.entity.UserRoles">
+		select userid,roleid
+		from userroles
+		<if test="userid!=null">where userid=#{userid}</if>
+ 		<if test="roleid!=null">where roleId=#{roleid}</if>
+	</select> 
+	
+ 	<!-- 禁用/启用 -->
+ 	<update id="updateDisabled" parameterType="com.shiroDemo.entity.User">
+ 		update user
+    		set isDisabled=#{isDisabled}
+    		where id=#{id} 
+ 	</update>
+ 	
+ 		<!-- 根据用户ID查询角色 -->
+ 	<select id="findRoleByUserId" parameterType="Long" resultType="String">
+ 		select DISTINCT r.name
+		from userroles a,role r
+		where a.roleId=r.id
+			and a.userid=#{userid}
+ 	</select>
+ 
+ 	<!-- 根据用户ID查询权限 -->
+ 	<select id="findPermissionByUserId" parameterType="Long" resultType="String">
+		SELECT DISTINCT p.permission FROM permission p
+		WHERE p.id IN 
+			(SELECT r.permissionId FROM rolePermissions r
+				WHERE EXISTS 
+				(SELECT a.roleId FROM UserRoles a
+			    	WHERE a.UserId = #{userid}))
+ 	</select>
+ 	
+ 	<select id="selectOne" resultType="com.shiroDemo.entity.User">
+ 		select <include refid="Base_Column_List" /> from user	where account = #{account}
+ 	</select>
+	
+</mapper>
